@@ -1,0 +1,36 @@
+\begin{algorithm}[H]
+    \caption{Pseudo-Code for Kosaraju's Algorithm}
+    \begin{algorithmic}[1]
+        \Function{Kosaraju}{$G(N, E)$}
+            \FORALL{$ n \in N $}
+                \STATE{$ visited(n) \gets \FALSE $}
+            \ENDFOR
+            \STATE{$ strongComponent \gets 0 $}
+            \STATE{$ q \gets \emptyset $}
+            \FORALL{$ n \in N $}
+                \STATE{$ dfsVisit(n, strongComponent, q) $}
+            \ENDFOR
+            \STATE{$ revertEdges(G) $} \Comment{revert all the edges of the graph}
+            \FORALL{$ n \in N $}
+                \STATE{$ visited(n) \gets \FALSE $}
+            \ENDFOR
+            \STATE{$ strongComponent \gets 1 $}
+            \FORALL{$ s \neq \emptyset $}
+                \STATE{$ dfsVisit(extractFront(s), strongComponent, q) $}
+                \STATE{$ strongComponent \gets strongComponent + 1 $}
+            \ENDFOR
+        \EndFunction
+        \Function{dfsVisit}{$n, strongComponent, q$} \Comment{strongComponent is the identifier}
+            \IF{$ visited(n) $}
+                \RETURN
+            \ENDIF
+            \STATE{$ component(n) \gets strongComponent $}
+            \IF{$ strongComponent = 0$}
+                \STATE{$ Insert(q, n) $}
+            \ENDIF
+            \STATE{$ visited(n) \gets \TRUE $}
+            \FORALL{$ (n, n2) \in Adj(n) $}
+                \STATE{$ dfsVisit(n2, strongComponent, q)$}
+            \ENDFOR
+    \end{algorithmic}
+\end{algorithm}

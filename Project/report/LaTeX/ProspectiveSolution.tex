@@ -1,0 +1,58 @@
+\chapter{Prospective Solution}
+
+
+\section{Pre-Processing of Input Data}
+Before going through with the problem resolution and trying to find the shortest path for the vehicles, we opt to pre-process the graph, making the other tasks easier.
+
+\begin{itemize}
+    \item calculating the shortest paths for all pairs of nodes in a certain radius of the company's garage through use of Floyd-Warshall's algorithm. This will allow the shortest paths between most used nodes to already be calculated, speeding up the calculation of itineraries
+    \item evaluating the connectivity of the graph through the Tarjan's algorithm,  followed by removal of the irrelevant elements
+\end{itemize}
+
+
+\section{Problem Identification}
+
+With the graph and the orders pre-processed, there's now a need to find the most efficient way for the vehicles to pick up and deliver the costumers' orders. Before, we have divided the problem into four problems:
+\begin{itemize}
+    \item \textbf{I} - Calculation of the itineraries
+    \item \textbf{II} - Inclusion of recharging points in the paths as needed
+    \item \textbf{III} - Evaluation of the graph's connectivity
+    \item \textbf{IV} -Distribution of the orders between the vehicles available to the company
+\end{itemize}
+
+
+\section{Solutions}
+
+\subsection{Problem I - Itineraries/Routes Calculation}
+Although most relevant pairs of nodes already have their shortest path calculated, some pick up or delivery points might be out of bound for the pre-processing calculations. For these and other special cases, we deemed Bidirectional Dijkstra with implementation of A* algorithm the best option. This choice was made considering the speed of the algorithm and the fact that the destination node is supposedly always known. 
+
+The itinerary for a vehicle is calculated having into account the shortest paths between the interest points of his orders (and the recharge points). The algorithm to perform this task will most likely implement a backtracking strategy, in case autonomy is a problem.
+
+\subsection{Problem II - Autonomy/Range}
+To tackle this problem, we use the following strategy: 
+\begin{enumerate}
+    \item Before every assignment of a vehicle to a certain path, its current range must be evaluated. 
+    \item If the value is not enough for the voyage, the vehicle must localize one or more recharge points. The criteria to find the best points is to choose the recharge point closest to both the starting and the finishing node
+    \item If the value is enough, it must also be checked if the vehicle has enough autonomy to get to a recharge point after the path
+    \item If both 2. and 3.'s  answers are positive, it is safe to proceed. Else, recharge point must be included in his itinerary
+    \item If there are no recharge points available in the conditions, the itinerary is aborted
+\end{enumerate}
+
+\subsection{Problem III - Connectivity}
+Tarjan's algorithm was our choice to solve the connectivity problem. By checking the connectivity of the graph, we can check for any nodes that are not accessible, supposedly due to road work, accidents or other unexpected events. We chose Tarjan's because it presents itself as the fastest option from the ones we analysed.
+
+\subsection{Problem IV - Orders Distribution}
+The distribution of orders by the vehicles is by far the most challenging subproblem. This is a Route Optimization problem. Our solution for it was not optimal, yet we made an effort to make the result the best possible. We solved this problem by dividing the pick up points (representing each a different order) into $|V|$ different groups, where $|V|$ is the number of vehicles available. We do this using the Agglomerative Hierarchical Clustering described in the previous section.
+
+\subsection{General}
+In sum, our solution:
+\begin{enumerate}
+    \item Pre-Processing of the graph in terms of shortest paths and connectivity
+    \item Ditribution of Orders into groups
+    \item Calculation of the best route for each group (which represents a vehicle's orders)
+    \begin{itemize}
+        \item Use of the shortest paths pre-calculated or calculate new ones if necessary
+        \item Try the best route; if autonomy deems into impossible at any point, rewind until you can change a decision (backtracking)
+    \end{itemize}
+\end{enumerate}
+\uline{Note:} The algorithms and solutions presented may not be the exact same to be used, they only represent an estimation. In the second part of this work, the algorithms will be tested and some changes may be necessary.

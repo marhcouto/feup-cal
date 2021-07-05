@@ -1,0 +1,25 @@
+\begin{algorithm}[H]
+    \caption{Pseudo-Code for Bellman-Ford}
+    \begin{algorithmic}[1]
+        \Function{Bellman-Ford}{$G(N, E), s$}
+            \FORALL{$ n \in N $}
+                \STATE{$ dist(n) \gets \infty $}
+                \STATE{$ path(n) \gets nil $}
+            \ENDFOR
+            \STATE{$ dist(s) \gets 0 $}
+            \FOR{$ i = 1 $ \textbf{to} $ |N| - 1 $}
+                \FORALL{$ (n1, n2) \in E $}
+                    \IF{$ dist(n2) > dist(n1) + weight(n1, n2) $}
+                        \STATE{$ dist(n2) \gets dist(n1) + weight(n1, n2) $}
+                        \STATE{$ path(n2) \gets n1 $}
+                    \ENDIF
+                \ENDFOR
+            \ENDFOR
+            \FORALL{$ (n1, n2) \in E $}
+                \IF{$ dist(n1) + weight(n1, n2) < dist(n2) $}
+                    \PRINT fail: negative cycle
+                \ENDIF
+            \ENDFOR
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}

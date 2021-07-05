@@ -1,0 +1,279 @@
+\chapter{Algorithms}
+In this chapter, we will list some important algorithms which may be used in the solution of each subproblem.
+
+\section{Shortest Path Between Two Nodes}
+
+Algorithms for the calculation of the Shortest Path between two points are very important for the solution of this problem. They will be used to calculate the shortest path between multiple points when calculating a vehicle's path, such as the shortest path between the garage and a pick up point. To do this, there are many algorithms at our disposal. We will evaluate some of them and make a decision on which is(are) best for the situation at hand.
+
+
+\subsection{Dijkstra's Algorithm}
+
+\subsubsection{Description}
+This algorithm was conceived by Edsger W. Dijkstra's in 1956 and is used to calculate shortest paths in directed or undirected graphs, so long there are no edges with negative weight. Upon utilization of this algorithm, a tree holding the shortest paths from the origin node to all others is formed. 
+
+\subsubsection{Extra Data, Data Structures and Algorithms Required}
+\begin{itemize}
+    \item Minimum distance to the origin node from each of the graph's nodes (dist)
+    \item Node that comes before it in its path (path)
+    \item Priority queue to hold the nodes to be processed next
+    \item Decrease-Key function, to maintain the nodes with shortest distance in the top of the queue
+\end{itemize}
+
+\input{Algorithms/Dijkstra.tex}
+
+\subsubsection{Analysis}
+The first part of the algorithm's goal is to prepare the data (lines 1-6): paths are set to null, distances to infinity, the priority queue is initialized and the origin node is inserted. Then, a breadth-first search is performed; a check is made to every node found in order to understand if its path can be shortened by the use of the edge in analysis. After that, if the node is not already in the queue, it must be inserted, to be eventually processed. If it is, its key must be reduced. The items of the priority queue are ordered by their key. This system is used so that the nodes which are closest to the origin are processed first. This procedure ensures that the distance of already processed nodes remains intact, boosting the algorithm's efficiency and making this a greedy algorithm. \\
+%\begin{itemize}
+%    \item \textbf{Loop invariant} - $ priorityQueue \neq \emptyset $, as each time a node is processed, its shortest path is defined and all nodes will be processed when the queue is empty
+%    \item \textbf{Loop variant} - the number of nodes to be processed, since the algorithm would stop when the queue is empty
+%\end{itemize}
+
+\subsubsection{Efficiency}
+\begin{itemize}
+    \item \textbf{Temporal Complexity} - $ O((|N|+|E|) \times \log(|N|) $, where E is the set of edges and N the set of nodes of the graph. Decrease-Key's time efficiency is $ O(|E| \times log(|N|)$. It can be $ O(1) $ if Fibonacci Heaps are used instead of regular Priority Queues, making the whole algorithm $ O(|N| \times log(|N|) $ 
+    \item \textbf{Spatial Complexity} - Depends on the implementation, but usually $ O(|N|) $
+\end{itemize}
+
+\subsubsection{Usability}
+This algorithm is one to consider using in the problem, but there may be slightly more efficient ones.
+
+
+\subsection{Bellman-Ford Algorithm}
+
+\subsubsection{Description}
+The Bellman-Ford Algorithm is another algorithm used to calculate the shortest path between nodes in a graph. It was first proposed by Alfonso Shimbel in 1955 but ended up being named after Richard Bellman and Lester Ford, who later officially published it independently. This algorithm is useful to calculate shortest paths in graphs with negative weight edges and to detect negative edge cycles in them.
+
+\subsubsection{Extra Data, Data Structures and Algorithms Required}
+\begin{itemize}
+    \item Minimum distance to the origin node from each of the graph's nodes (dist)
+    \item Node that comes before it in its path (path)
+\end{itemize}
+
+\input{Algorithms/Bellman-Ford.tex}
+
+\subsubsection{Analysis}
+In this algorithm, the first step is to prepare the graph (lines 1-4). Then, all edges are analyzed $|N| - 1 $ times(lines 6-7), checking if they can be used to shorten the path from s to the destination node of the edge(line 8). This process is repeated this amount of times because it is the maximum length in edges for a path. In the end, a check is made, to see if the algorithm worked. If it did not, the cycle as negative weight loops (lines 14-18). This algorithm is considered to implement dynamic programming.
+
+\subsubsection{Efficiency}
+\begin{itemize}
+    \item \textbf{Temporal Complexity} - $ O(|N| \times |E|) $, where E is the set of edges and N the set of nodes of the graph
+    \item \textbf{Spatial Complexity} - Depends on the implementation, but in this case $ O(1) $
+\end{itemize}
+
+\subsubsection{Usability}
+This algorithm poses little interest to this problem given that our edges' weights represent the length of a road, which would never be negative. 
+
+
+\subsection{Bidirectional Dijkstra}
+
+\subsubsection{Description}
+Ira Pohl was the first one to design and implement a bidirectional heuristic search algorithm in 1971. 
+Bidirectional Dijkstra's that implements the idea of a bidirectional search into Dijkstra's algorithm. It finds a shortest path from an initial node to a goal node in a directed or undirected graph. It runs two simultaneous searches: one forward from the initial state, and one backward from the goal, alternating between the two. The stopping criteria is one that must be very well implemented to guarantee the shortest path. Compared to normal Dijkstra's there's a speedup of 2x.
+
+\subsubsection{Extra Data, Data Structures and Algorithms Required}
+\begin{itemize}
+    \item Minimum distances to the origin and goal nodes from each of the graph's nodes (dist)
+    \item Nodes that come before each node in both forward and backward paths (not implemented in pseudocode)
+    \item Two priority queues to hold the nodes to be processed next in each direction
+    \item Way of search (way) (1 if it was encountered by forward search first, 2 if it was encountered by backward search first, 0 default)
+    \item Decrease-Key function, to maintain the nodes with shortest distance in the top of the queue
+\end{itemize}
+
+\input{Algorithms/Bidirectional.tex}
+\uline{Note:} The pseudocode is not complete, missing the parts to calculate the actual path and to calculate the transposed graph (needed for the backward search because this is a directed graph). These parts were excluded in order to not make the algorithm's pseudocode even more complex and spacious.
+
+\subsubsection{Analysis}
+This algorithm basically performs two Dijkstra's algorithms: one starting from the initial node and going forward(lines 16-23); another one starting from the ending node and going backward (lines 24-31). Each time they cross, the distance is registered (lines 25-26 for example). The stopping criteria is a tricky problem in this case. In many situations, the algorithm ends when the two sets collide (forward search and backward search). We found that this criteria did not guarantee the shortest path. Instead, we chose to end the algorithm when there can be no longer any better distances because the nodes being processed are already too far apart.
+%\begin{itemize}
+%    \item \textbf{Loop invariant} - $ dist(n) + distR(v) > bestDist $, where best distance is the best Distance for a complete path obtained yet, dist(n) is the distance of the node being processed in forward way to the starting node and $ distR(v) $ the distance of the node being processed in backward way to the ending node
+%    \item \textbf{Loop variant} - the number of nodes to be processed in each way, since the algorithm would stop when each search had got no more nodes to process on the queue
+%\end{itemize}
+
+\subsubsection{Efficiency}
+\begin{itemize}
+    \item \textbf{Temporal Complexity} - $ O((|N|+|E|) \times \log(|N|) $, where E is the set of edges and N the set of nodes of the graph.
+    \item \textbf{Spatial Complexity} - Depends on the implementation, but usually $ O(|N|) $
+\end{itemize}
+Even though there's a speed up, the complexities will be the same as in Dijkstra's, since the difference is multiplication and division by constants, which is ignored in Big O order.
+
+\subsubsection{Usability}
+Bidirectional Dijkstra's algorithm is one of the fastest algorithms when it comes shortest paths. It has the down-side of requiring the previous knowledge of the ending/destination node, but in this scenario that is not a problem.
+
+
+\subsection{A* Algorithms}
+\subsubsection{Description and Analysis}
+The first time a A* Algorithm came up was in \textit{Shakey Project}, project of the first general purpose mobile robot capable of reasoning about is own actions. In an A* (pronounced A-star) Search Algorithm, the 'level' of a node in a graph becomes a sum of two different characteristics. For instance, applied to this problem, the distance a node is from the origin in the search algorithm is substituted for the sum of:
+\begin{itemize}
+    \item $d_{sv}$ - actual distance to the origin
+    \item $\pi_{nt}$ - estimated guess of the distance to the goal node (heuristic)
+\end{itemize}
+The reliability of this technique depends on the efficacy of the heuristic. In this case, because the weight of edges is distance in meters, the efficacy is great if we assume $\pi$ to be the euclidean distance. This algorithm can be implemented into both Bidirectional and normal Dijkstra's.
+\begin{itemize}
+    \item \textbf{Upside} - Speeds up the process immensely
+    \item \textbf{Downside} - The algorithm does not absolutely guarantee the best solution.
+\end{itemize}
+
+\subsubsection{Usability}
+This is a technique that shows to be very promising and a good idea to implement in the solution of this problem.
+
+
+
+\newpage
+\section{Shortest Path Between All Nodes}
+This section is dedicated to algorithms that calculate the shortest path between all pairs of points. Such algorithms may be used in the solution, specially in the pre-processing part.
+
+\subsection{Floyd-Warshall}
+
+\subsubsection{Description}
+This algorithm was published by Robert Floyd in 1962, yet it was virtually the same as some algorithms published by Stephen Warshall and Bernard Roy, 1962 and 1959 respectively. It takes an adjacency matrix that represents the graph as an input (empty in the beginning) and calculates the shortest paths between all nodes. The value of a path between to vertices is the sum of all edge's weights through that path. It is registered in the matrix as such: distance of shortest path between 1 and 4 would be matrix[1][4]. Edges may have negative values but the graph can't have a negative cycle.
+% For each pair of vertices, the shortest path is calculated. Time complexity is O \begin{math}(|V| ^3).\end{math}, and space complexity is O \begin{math}(|V| ^2).\end{math}
+
+\subsubsection{Extra Data, Data Structures and Algorithms Required}
+\begin{itemize}
+    \item $ |N| \times |N| $ matrix (another one if paths are needed), where $ |N| $ is the number of vertices
+\end{itemize}
+
+\input{Algorithms/Floyd-Warshall.tex}
+\uline{Note:} The pseudocode is not complete, missing the matrix to calculate the paths and respective instructions. This was done in order to simplify the algorithm and minimize it.
+
+\subsubsection{Analysis}
+First part is basically the preparation of the matrix: fill it with $\infty$ distances; for the edges existant (lines 1-3), change the values in the matrix to their weight (lines 4-6). Then, all pairs of nodes will be checked on if there is any node the path can pass through that would minimize its cost (lines 7-14). 
+
+\subsubsection{Efficiency}
+\begin{itemize}
+    \item \textbf{Temporal Complexity} - $ O(|N|^3) $, where N is the set of nodes of the graph.
+    \item \textbf{Spatial Complexity} - Depends on the implementation, but usually $ O(|N|^2) $, for the matrix of size $|N| \times |N|$
+\end{itemize}
+
+\subsubsection{Usability}
+This algorithm is an interesting algorithm to be used in the beginning of the program, to leave all shortest paths processed. However, this might take a long time, and it might be a better idea to simply calculate the shortest path each time it is needed.
+
+
+\subsection{Dijkstra's Algorithm}
+
+\subsubsection{Description and Analysis}
+Dijkstra's can also be used to calculate all shortest paths. This is done by simply executing the algorithm for every node in the graph as origin.
+ 
+\subsubsection{Efficiency}
+\begin{itemize}
+    \item \textbf{Temporal Complexity} - $ O(|N| \times (|N|+|E|) \times \log(|N|) $, where E is the set of edges and N the set of nodes of the graph. Same as Dijkstra's but multiplied by $|N|$
+    \item \textbf{Spatial Complexity} - Depends on the implementation, but usually $ O(|N|) $, for the priority queue, same as Dijkstra's
+\end{itemize}
+
+\subsubsection{Usability}
+This is a better option for less dense graphs compared to Floyd-Warshall. As this is not the case for a road network, this algorithm is relatively irrelevant.
+
+
+
+\newpage
+\section{Connectivity}
+The algorithms in this section check the connectivity of the graph. By other words, this section is dedicated to algorithms that detect if any nodes are inaccessible to others, dividing the graph in strongly connected components. A graph will be strongly connected if there is a path between all pairs of points, or if the graph is a strongly connected component itself. Algorithms to test connectivity may be useful to solve the problem of unpredictability.
+
+
+\subsection{Brute Force with Floyd-Warshall}
+
+\subsubsection{Description and Analysis}
+One way to test the connectivity of a graph is by analyzing the results of Floyd-Warhsall in a certain graph. If there are any pairs of nodes which the distance remains $\infty$, they do not belong to the same strongly connected component.
+
+\subsubsection{Efficiency}
+\begin{itemize}
+    \item \textbf{Temporal Complexity} - $ O(|N|^3) $, where N is the set of nodes of the graph, same as Floyd-Warshall
+    \item \textbf{Spatial Complexity} - Depends on the implementation, but usually $ O(|N|^2) $, for the matrix of size $|N| \times |N|$
+\end{itemize}
+
+\subsubsection{Usability}
+This algorithm works yet is not a good option. Even if the Floyd-Warshall is going to be utilized anyway, the complexity of traversing the whole matrix is $O(|N|^2)$. Therefore, there are much better algorithms for the job.
+
+
+\subsection{Kosaraju's algorithm}
+
+\subsubsection{Description}
+The algorithm was first published in 1981 by Micha Sharir but gets is name from whom first mencioned it in 1971, Sambasiva Rao Kosaraju. This algorithm allows to identify strongly connected components in a directed graph, testing its connectivity. 
+
+\subsubsection{Extra Data, Data Structures and Algorithms Required}
+\begin{itemize}
+    \item boolean identifying if a node has been visited or not (visited)
+    \item identifier of the strong component the node belongs to (strongComponent)
+    \item function to invert the edges of the graph
+    \item a queue to hold the order of the visits
+\end{itemize}
+
+\input{Algorithms/Kosaraju.tex}
+
+\subsubsection{Analysis}
+The algorithm performs two depth-first searches in the graph. In the first one, it marks the nodes by visit order (lines 5-9). The second one starts on the nodes with lowest order and is performed on the graph with the edges inverted (lines 10-14). This second one will generate multiple expansion trees (or just one if the graph is strongly connected), each being a strongly connected component. If two nodes are not in the same strongly connected component, one of them cannot be reached from the other.
+
+\subsubsection{Efficiency}
+\begin{itemize}
+    \item \textbf{Temporal Complexity} - $ O(|N|+|E|) $, where N is the set of nodes of the graph and E the set of edges. Each dfs is $O(|N|+|E|)$
+    \item \textbf{Spatial Complexity} - Depends on the implementation, but in this one it is $ O(|N|) $, being the size of the queue $|N|$
+\end{itemize}
+
+\subsubsection{Usability}
+This algorithm is a serious candidate to check the connectivity of the graph.
+
+
+\subsection{Tarjan's Algorithm}
+
+\subsubsection{Description}
+The Tarjan's Algorithm was named after its inventor, Robert Tarjan, and is another algorithm capable of identifying the strongly connected components in a given graph. It does so, similarly to Kosaraju's, with the help of dfs, only this time the graph is only traversed once.
+
+\subsubsection{Extra Data, Data Structures and Algorithms Required}
+\begin{itemize}
+    \item boolean identifying if a node has been visited or not (visited)
+    \item integer identifying the counter when a node is first found (num)
+    \item integer identifying the lowest num reachable by a node (low)
+\end{itemize}
+
+\input{Algorithms/Tarjan.tex}
+
+\subsubsection{Analysis}
+The algorithm is fairly simple: the graph is traversed by a depth first search (lines 5-6); the $num$ and $low$ of a node are set to the $numCounter$(lines 12-13); each time an already visited node is found, all nodes with $low > that nodes low$ will be changed (lines 16-18). This way, all vertices with the same $low$ belong to the same strongly connected component. 
+
+\subsubsection{Efficiency}
+\begin{itemize}
+    \item \textbf{Temporal Complexity} - $ O(|N|+|E|) $, where N is the set of nodes of the graph and E the set of edges. The dfs is $O(|N|+|E|)$. This is the same complexity as Kosaraju's, but the algorithm is twice as fast since it only performs one dfs.
+    \item \textbf{Spatial Complexity} - Depends on the implementation, but in this one it is $ O(1) $.
+\end{itemize}
+
+\subsubsection{Usability}
+This algorithm is an even better candidate than the last one, since it is supposedly twice as fast. 
+
+
+\newpage
+\section{Clustering Algorithms}
+
+A Clustering is a machine learning task which involves the recognition of natural grouping in data. Such algorithms can be used in the distribution of orders per vehicle.
+
+
+\subsection{Agglomerative Hierarchical Clustering}
+
+\subsubsection{Description}
+
+This algorithm is one of the most common Hierarchical Clustering algorithms. It is used to form groups of objects of data based on their similarity. In this case, we will use it to form N groups of data nodes with great similarity.
+
+\input{Algorithms/Clustering.tex}
+\uline{Note:} the implementation presented above is just a rough sketch, the one to be implemented will be different.
+
+\subsubsection{Analysis}
+The algorithm begins to find the pair of points which are most similar. In this case, similarity is measured by distance (lines 6-14). After he has found one, he merges the two sets (. In between sets, there are many criteria to calculate similarity. The one we will implement is taking the similarity between two sets as the similarity of the most similar pair of points where one belong to the first set and other to the second set. This algorithm adopts a Bottom-Up strategy (as do all agglomerative hierarchical clustering algorithms), as it start by processing each node and joining them to obtain the final result.  
+
+\subsubsection{Efficiency}
+\begin{itemize}
+    \item \textbf{Temporal Complexity} - $ O(|S|^2*(|S| - n)) $, where S is the set of points. This is only an estimated guess.
+    \item \textbf{Spatial Complexity} - Depends on the implementation, but in this one it is $ O(|S|) $.
+\end{itemize}
+
+\subsubsection{Usability}
+This is the only algorithm analysed in this cathegory, thus it is the chosen one to perform the task.
+
+\section{Extras}
+There are other algorithms, simpler or less relevant, that may (or may not) be used in our solution:
+\begin{itemize}
+    \item Breadth-First Search (bfs) - Graph searching algorithm
+    \item Depth-First Search (dfs) - Graph searching algorithm
+    \item Decrease-Key Function - Priority changing function on a priority queue
+    \item Graph Transposing Function - Inversion of the edges in a directed graph
+    \item Fibonacci Heaps (Data structure) - Improved priority queue
+    \item Euclidian Distance function - To calculate the euclidian (straight-line) distance between two points
+\end{itemize}

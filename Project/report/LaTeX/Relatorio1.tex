@@ -1,0 +1,100 @@
+\documentclass[12pt]{report}
+
+% Margins
+\usepackage[]{geometry}
+
+% Links
+\usepackage{hyperref}
+\makeatletter
+\g@addto@macro{\UrlBreaks}{\UrlOrds}
+\makeatother
+
+% Maths
+\usepackage{siunitx}
+
+% Underlines
+\usepackage{ulem}
+
+% Imports
+\usepackage{import}
+
+% For pseudo-code
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{algpseudocode}
+
+% Graphics
+\usepackage{graphicx}
+
+% Picture for title
+\usepackage{titlepic}
+
+% Language 
+\usepackage[english]{babel}
+
+% Headers and footers
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\fancyhf{}
+\lhead{\fancyplain{}{\leftmark}}
+\rhead{\fancyplain{}{E-Stafetas - Delivery 1}}
+\lfoot{\fancyplain{}{}}
+\cfoot{\thepage}
+
+
+% Picture
+\titlepic{\begin{figure}[t!]
+\centering
+\includegraphics{unnamed.png}
+\vspace{-3.0cm}
+\end{figure}}
+% Date
+\date{16 of April, 2021}
+% Title
+\title{\Huge{\textbf{E-Stafetas - merchandise delivery by electrical vehicles \\
+\Large{ Conceção e Análise de Algoritmos - Part I }}}}
+% Author
+\author{
+\textbf{\Large Class 3 group 2} \vspace{0.5em} \\
+\begin{tabular}{r l}
+	\email{up201906086@edu.fe.up.pt} & Marcelo Henriques Couto \\
+	\email{up201807481@edu.fe.up.pt} & Afonso Marques Cabral de Carvalho \\
+	\email{up201705110@edu.fe.up.pt} & João Luis Cardoso Rodrigo \\
+\end{tabular}
+}
+
+% No paragraph indentation
+\parindent=0pt
+
+% Start the document
+\begin{document}
+\maketitle
+
+\newpage
+\tableofcontents
+
+\newpage
+\input{ExecutiveSummary.tex}
+
+\newpage
+\input{ProblemDescription.tex}
+
+\newpage
+\input{ProblemFormalization.tex}
+
+\newpage
+\input{Algorithms.tex}
+
+\newpage
+\input{ProspectiveSolution.tex}
+
+\newpage 
+\input{Functionalities.tex}
+
+\newpage
+\input{Conclusion.tex}
+
+\newpage
+\input{Biblio.tex}
+
+\end{document}

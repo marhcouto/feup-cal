@@ -1,0 +1,154 @@
+\chapter{Problem Formalization}
+
+
+
+\section{Input Data}
+
+
+\subsubsection{Notes}
+\begin{itemize}
+    \item The geographical information will be loaded in the form of a map, obtained in OpenStreetMap and converted to a graph
+    \item The words 'street', 'road' and 'way' are used interchangeably
+    \item The words 'node' and 'vertex' ('nodes' and 'vertices') are used interchangeably
+    \item The words 'range' and 'autonomy' are used interchangeably
+    \irem The words 'route' and 'itinerary' are used interchangeably
+\end{itemize}
+
+
+\subsubsection{Graph}
+\paragraph{G = (N, E)} - weighted directed (roads may be one way only) graph that represents the map. It is composed by Nodes and Edges
+\begin{itemize}
+
+	\item N - set of Nodes (a node represents an \uline{\textit{interest point}} or simply a point in the road network) (N(i) is the ith element). For each node:
+\begin{itemize}
+	\item Adj - edges whose origin is N(i)
+	\item lat - the latitude of the point it represents in the map
+	\item long - the longitude of the point it represents in the map
+\end{itemize}
+
+	\item A - set of Edges (an edge represents a way/street/road) (E(i) is the ith element). For each edge:
+\begin{itemize}
+	\item w - weight (represents the length of the way) (measured in meters)
+	\item dest - origin node of the edge
+	\item orig - destination node of the edge
+\end{itemize}
+
+\end{itemize}
+
+\uline{Interest Points} (special nodes)
+\begin{itemize}
+	\item base - base/garage of the company
+	\item rp - recharge points
+	\item pup - pick up point
+	\item dp - delivery point
+\end{itemize}
+
+
+\subsubsection{Vehicles}
+\paragraph{V} - set of vehicles that make the fleet of the company (Ve(i) is the ith element). For each vehicle:
+\begin{itemize}
+	\item range - current range of the vehicle (in meters)
+	\item license-plate - plate that identifies the car
+\end{itemize}
+
+\subsubsection{Orders}
+\paragraph{O} - set of orders for the day (O(i) is the ith element). For each order:
+\begin{itemize}
+    \item pup - pick up point
+	\item dp - delivery point
+	\item orderID - id that represents the order
+\end{itemize}
+
+
+
+\section{Output Data}
+Each vehicle is assigned a \textit{path} that represents the best sequence of nodes for the orders \textit{Ov} he's been assigned to. The path and orders are distributed taking to account the optimization of the distance travelled and the range of each vehicle at any given time.
+For each Vehicle V(i):
+\begin{itemize}
+	\item path - sequence of nodes that represents the path to be taken by a vehicle on a day (path(i) is the ith element). Path has to be connected and finish on the starting point.
+	\item Ov - set of orders assigned to the vehicle (Ov(i) is the ith element)
+\end{itemize}
+
+
+
+\section{Restrictions}
+
+
+\subsection{Input Restrictions}
+
+\subsubsection{General}
+\begin{itemize}
+    \item The sets' indexes are implicitly limited by their sizes and 0\\ \uline{Example:}
+    $ 0 \leq i < |N| $
+\end{itemize}
+
+\subsubsection{Graph}
+\begin{itemize}
+    \item Node
+    \begin{itemize}
+        \item $ |N| > 0 $ 
+        \item $ \forall n \in N, Adj(n) \subseteq E $ (Adj is the set of edges originated in N(i))
+        \item $ \forall n \in N, \ang{0} \leq lat \leq \ang{360} $
+        \item $ \forall n \in N, \ang{0} \leq long \leq \ang{360} $
+    \end{itemize}   
+    
+    \item{Edge}
+    \begin{itemize}
+        \item $ |E| > 0 $
+        \item $ \forall e \in E, w > 0 $ (the length of a way or road must be always bigger than 0)
+        \item $ \forall e \in E, orig \in N $ 
+        \item $ \forall e \in E, dest \in N $
+    \end{itemize}
+    
+    \item $ base \in N $
+    \item $ rp \in N $
+    \item $ pup \in N $
+    \item $ dp \in N $
+    \item $ \exists! n \in N, n = base $
+    
+\end{itemize}
+
+\subsubsection{Vehicles}
+\begin{itemize}
+    \item $ |V| > 0 $
+    \item $ \forall v \in V, range > 0 $
+\end{itemize}
+
+\subsubsection{Orders}
+\begin{itemize}
+    \item $ |O| \geq 0 $
+    \item $ \forall o \in O, pup \in N $
+    \item $ \forall o \in O, dp \in N $
+\end{itemize}
+
+
+\subsection{Output Restrictions}
+
+\subsubsection{Path}
+\begin{itemize}
+    \item $ |path| > 0 $
+    \item $ path \subseteq N $
+    \item $ \forall p \in path, p \in N $
+\end{itemize}
+
+\subsubsection{Vehicle Orders}
+\begin{itemize}
+    \item $ |Ov| \geq 0 $
+    \item $ Ov \subseteq O $
+    \item $ \forall o \in Ov, o \in O$
+\end{itemize}
+
+
+
+\section{Objective Function}
+
+The company's goal for this system is to optimize the use of their vehicles. As we will not consider different speeds of travel for the vehicles, the time to fulfill a order behaves in parallel to the distance of its path. In our interpretation of the problem, optimizing the use of the vehicles would mean to find the shortest paths between two interest points in a route, as well as minimizing the distance of the route itself. In an optimal solution, the maximum distance travelled by a vehicle in a day would also be minimized. As such, there must be three functions to optimize (ones depend on the others). Being $ f $ the function that represents the most distance travelled by a vehicle; $ g $ the sum of the distances between the points in an itinerary; $ h $ the function that represents the distance between two interest points: the objective is to minimize them:
+\[ f = \max(D) \]
+\begin{itemize}
+    \item $ D $ being the set of distances travelled by each vehicle in a day
+\end{itemize}
+\[ g = \max(sum(d)) \]
+\[ h = \max(d) \]
+\begin{itemize}
+    \item $ d_1 $ being the distance from one interest point to another
+\end{itemize}
