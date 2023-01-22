@@ -8,6 +8,7 @@
 - Practical project: [REPO](https://github.com/marhcouto/e-stafetas)
 
 **FINAL GRADE:** 18
+
 ------
 
 # Project
